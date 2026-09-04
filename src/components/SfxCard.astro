@@ -1,0 +1,72 @@
+---
+interface Props {
+  id: number;
+  name: string;
+  category: string;
+  image: string;
+}
+
+const { name, category, image } = Astro.props as Props;
+---
+
+<article class="sfx-card">
+  <div class="thumb" role="img" aria-label={image}>
+    <span>{image}</span>
+  </div>
+  <div class="body">
+    <span class="category">{category}</span>
+    <h3>{name}</h3>
+  </div>
+</article>
+
+<style>
+  .sfx-card {
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    background: var(--surface);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .thumb {
+    aspect-ratio: 4 / 3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: linear-gradient(135deg, #1c2028, #12141a);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .thumb span {
+    color: var(--muted);
+    font-size: 0.85rem;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .body {
+    padding: 0.9rem 1rem 1.1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+
+  .category {
+    align-self: flex-start;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--accent);
+    background: rgba(125, 211, 252, 0.12);
+    padding: 0.15rem 0.5rem;
+    border-radius: 999px;
+  }
+
+  h3 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+  }
+</style>

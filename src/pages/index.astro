@@ -1,0 +1,96 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SfxCard from '../components/SfxCard.astro';
+import sfxData from '../data/sfx.json';
+import { CATEGORIES } from '../data/categories.js';
+---
+
+<Layout
+  title="효과음 라이브러리"
+  description="eff, foley, ambi 카테고리로 정리된 효과음 라이브러리 목업 사이트"
+>
+  <section class="intro">
+    <h1>효과음 라이브러리</h1>
+    <p>Effect · Foley · Ambience 세 가지 카테고리로 정리한 사운드 목업입니다.</p>
+  </section>
+
+  {
+    CATEGORIES.map((cat) => (
+      <section class="category-section">
+        <div class="section-head">
+          <h2>
+            {cat.label} <span class="slug">/{cat.slug}</span>
+          </h2>
+          <a class="more" href={`/${cat.slug}`}>
+            전체보기 →
+          </a>
+        </div>
+        <p class="desc">{cat.description}</p>
+        <div class="grid">
+          {sfxData
+            .filter((item) => item.category === cat.slug)
+            .map((item) => (
+              <a href={`/${cat.slug}#sfx-${item.id}`}>
+                <SfxCard {...item} />
+              </a>
+            ))}
+        </div>
+      </section>
+    ))
+  }
+</Layout>
+
+<style>
+  .intro h1 {
+    margin: 0 0 0.5rem;
+    font-size: 2rem;
+  }
+
+  .intro p {
+    color: var(--muted);
+    margin: 0 0 2.5rem;
+  }
+
+  .category-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+  }
+
+  .section-head h2 {
+    margin: 0 0 0.25rem;
+    font-size: 1.3rem;
+  }
+
+  .slug {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 0.9rem;
+  }
+
+  .more {
+    color: var(--accent);
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .desc {
+    color: var(--muted);
+    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+
+  .grid a {
+    display: block;
+  }
+</style>

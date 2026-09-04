@@ -1,0 +1,76 @@
+---
+import Layout from '../layouts/Layout.astro';
+import SfxCard from '../components/SfxCard.astro';
+import sfxData from '../data/sfx.json';
+import { CATEGORIES, getCategory } from '../data/categories.js';
+
+export function getStaticPaths() {
+  return CATEGORIES.map((cat) => ({
+    params: { category: cat.slug },
+  }));
+}
+
+const { category } = Astro.params;
+const cat = getCategory(category as string);
+const items = sfxData.filter((item) => item.category === category);
+---
+
+<Layout
+  title={`${cat?.label} 효과음`}
+  description={`${cat?.label}(${cat?.slug}) 카테고리 효과음 목록 — ${cat?.description}`}
+>
+  <nav class="breadcrumb">
+    <a href="/">홈</a> / <span>{cat?.label}</span>
+  </nav>
+
+  <h1>{cat?.label} <span class="slug">/{cat?.slug}</span></h1>
+  <p class="desc">{cat?.description}</p>
+
+  <div class="grid">
+    {
+      items.map((item) => (
+        <div id={`sfx-${item.id}`}>
+          <SfxCard {...item} />
+        </div>
+      ))
+    }
+  </div>
+</Layout>
+
+<style>
+  .breadcrumb {
+    color: var(--muted);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb a {
+    color: var(--muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+
+  h1 {
+    margin: 0 0 0.5rem;
+    font-size: 1.8rem;
+  }
+
+  .slug {
+    color: var(--muted);
+    font-weight: 400;
+    font-size: 1rem;
+  }
+
+  .desc {
+    color: var(--muted);
+    margin: 0 0 2rem;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+  }
+</style>
