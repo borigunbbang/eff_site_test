@@ -1,17 +1,35 @@
-# SFX Library (Astro 임시 사이트)
+# SFX Library
 
-효과음 정리 사이트의 프로토타입입니다. eff / foley / ambi 세 카테고리를 목업 데이터(`src/data/sfx.json`)로 렌더링합니다.
+효과음 정리 사이트. eff / foley / ambi 세 카테고리로 효과음 메타데이터를 정리해서 보여줍니다.
 
-## 실행 방법
+🔗 **Live**: https://eff-site-test.vercel.app
+
+## 스택
+
+- **프론트엔드**: [Astro](https://astro.build) (SSR)
+- **백엔드/DB**: [Supabase](https://supabase.com) (Postgres + Row Level Security)
+- **배포**: [Vercel](https://vercel.com) — `main` 브랜치에 푸시하면 자동 재배포
+
+## 로컬 실행
 
 ```bash
 npm install
+```
+
+`.env.local` 파일을 만들고 Supabase 프로젝트의 URL/anon key를 채워주세요 (`.env.example` 참고):
+
+```
+PUBLIC_SUPABASE_URL=https://xxxxxxxxxxxx.supabase.co
+PUBLIC_SUPABASE_ANON_KEY=your-anon-public-key
+```
+
+```bash
 npm run dev
 ```
 
-브라우저에서 http://localhost:4321 접속하면 됩니다.
+브라우저에서 http://localhost:4321 접속.
 
-빌드(정적 파일 생성):
+빌드:
 
 ```bash
 npm run build
@@ -20,19 +38,25 @@ npm run preview
 
 ## 구조
 
-- `src/data/sfx.json` — 효과음 목업 데이터 (id, name, category, image)
-- `src/data/categories.js` — 카테고리 메타 정보 (label, description)
-- `src/layouts/Layout.astro` — 공통 레이아웃 + SEO용 meta 태그 (title, description, canonical, OG)
+- `supabase/migration.sql` — DB 스키마(`categories`, `sfx` 테이블) + RLS 정책 + 초기 데이터. Supabase SQL Editor에서 실행
+- `src/lib/supabase.js` — Supabase 클라이언트 (env var로 접속 정보 주입, WebSocket polyfill 포함)
+- `src/data/categories.js`, `src/data/sfx.js` — DB 조회 헬퍼 함수
+- `src/layouts/Layout.astro` — 공통 레이아웃 + SEO용 meta 태그
 - `src/components/SfxCard.astro` — 효과음 카드 컴포넌트
 - `src/pages/index.astro` — 홈 (카테고리별 미리보기)
-- `src/pages/[category].astro` — 카테고리별 전체 목록 페이지 (`/eff`, `/foley`, `/ambi`)를 `getStaticPaths`로 동적 생성
+- `src/pages/[category].astro` — 카테고리별 전체 목록 페이지 (`/eff`, `/foley`, `/ambi`)
 
-## 다음 단계 (백엔드 연동 시)
+## 콘텐츠 관리
 
-지금은 `sfx.json`을 정적으로 import하고 있어서, 나중에 실제 백엔드/DB를 붙일 때는 `sfx.json` import 부분을 API fetch로 교체하면 됩니다 (예: `[category].astro`의 `sfxData` 로딩부).
+관리자 UI는 따로 없습니다. Supabase 대시보드 → SQL Editor 또는 Table Editor에서 `categories`/`sfx` 테이블을 직접 편집합니다.
 
-SEO를 더 강화하려면:
+## 보안
 
-- `@astrojs/sitemap` 통합 추가
-- `public/robots.txt` 추가
-- 실제 오디오/이미지 파일 연결 시 `alt` 텍스트 및 구조화 데이터(JSON-LD) 보강
+- 비밀 키는 전부 환경변수로 분리 (`.env.local`은 git 추적 제외, Vercel은 대시보드 Environment Variables에 등록)
+- RLS 활성화 — anon 키로는 조회(SELECT)만 가능, 쓰기(INSERT/UPDATE/DELETE)는 차단됨
+
+## 다음 단계 후보
+
+- 실제 오디오 파일 업로드/재생 (Supabase Storage)
+- 관리자 페이지(CRUD UI) + 인증
+- 커스텀 도메인 연결
