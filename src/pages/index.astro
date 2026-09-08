@@ -1,8 +1,10 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SfxCard from '../components/SfxCard.astro';
-import sfxData from '../data/sfx.json';
-import { CATEGORIES } from '../data/categories.js';
+import { getAllSfx } from '../data/sfx.js';
+import { getCategories } from '../data/categories.js';
+
+const [sfxData, CATEGORIES] = await Promise.all([getAllSfx(), getCategories()]);
 ---
 
 <Layout

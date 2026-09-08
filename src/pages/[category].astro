@@ -1,18 +1,19 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import SfxCard from '../components/SfxCard.astro';
-import sfxData from '../data/sfx.json';
-import { CATEGORIES, getCategory } from '../data/categories.js';
-
-export function getStaticPaths() {
-  return CATEGORIES.map((cat) => ({
-    params: { category: cat.slug },
-  }));
-}
+import { getSfxByCategory } from '../data/sfx.js';
+import { getCategory } from '../data/categories.js';
 
 const { category } = Astro.params;
-const cat = getCategory(category as string);
-const items = sfxData.filter((item) => item.category === category);
+
+let cat;
+try {
+  cat = await getCategory(category as string);
+} catch {
+  return Astro.redirect('/404');
+}
+
+const items = await getSfxByCategory(category as string);
 ---
 
 <Layout
